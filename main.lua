@@ -828,6 +828,15 @@ function love.draw()
   -- play/editor field
   drawGrid(); drawPath()
 
+  -- show range preview while placing a tower
+  if game.state=="play" and game.selectedType and inField(mouse.x, mouse.y) then
+    local cx,cy = worldToCell(mouse.x, mouse.y)
+    local x,y = cellCenter(cx, cy)
+    local tt = towerTypes[game.selectedType]
+    love.graphics.setColor(1,1,1,0.07); love.graphics.circle("fill", x, y, tt.range)
+    love.graphics.setColor(1,1,1,0.25); love.graphics.circle("line", x, y, tt.range)
+  end
+
   love.graphics.setColor(1,1,1,1); love.graphics.setLineWidth(2)
   for _,b in ipairs(beams) do love.graphics.line(b.sx, b.sy, b.ex, b.ey) end
 

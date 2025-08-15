@@ -3,6 +3,10 @@
 All notable changes to **Steam Defense (BW, LÖVE2D)** are documented here.
 Dates use YYYY-MM-DD. Semantic-ish versions are used for clarity.
 
+## [1.2.1] - 2025-08-15 — Build Range Preview
+### Added
+- Placement cursor now shows the **attack radius** of the tower being positioned.
+
 ## [1.2.0] - 2025-08-15 — Fullscreen & UX polish
 ### Added
 - **Start in fullscreen** (desktop fullscreen). Menu shows current display mode.
