@@ -88,5 +88,5 @@ steamdefense-love2d/
 └─ (LÖVE save dir at runtime) mapcode.txt
 ```
 
-## License
-MIT — © 2025-08-15
+## Copyright
+CHEN ©2025
