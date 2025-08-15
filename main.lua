@@ -597,15 +597,28 @@ end
 
 -- Love callbacks
 function love.load()
-  love.window.setMode(W,H); love.window.setTitle("Steam Defense - Black & White"); love.graphics.setBackgroundColor(0,0,0)
+  -- Preserve any fullscreen setting defined in conf.lua
+  local fullscreen = love.window.getFullscreen()
+  love.window.setMode(W, H, {
+    fullscreen = fullscreen,
+    fullscreentype = "desktop",
+    resizable = true,
+    vsync = 1
+  })
+  love.window.setTitle("Steam Defense - Black & White")
+  love.graphics.setBackgroundColor(0,0,0)
   love.math.setRandomSeed(os.time())
+
+  -- Update cached dimensions to match current window mode
+  W, H = love.graphics.getWidth(), love.graphics.getHeight()
+  UI_W = W - FIELD_W
 
   -- System cursors
   cursors.arrow = love.mouse.getSystemCursor('arrow')
   cursors.cross  = love.mouse.getSystemCursor('crosshair')
   love.mouse.setCursor(cursors.arrow)
   currentCursor = 'arrow'
-  game.fullscreen = love.window.getFullscreen() or false
+  game.fullscreen = fullscreen
   fonts.base = love.graphics.newFont(14); fonts.h2 = love.graphics.newFont(18); fonts.big = love.graphics.newFont(28)
   love.graphics.setFont(fonts.base)
 
