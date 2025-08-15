@@ -15,7 +15,7 @@ Built for **LÖVE 11.x**. Starts **fullscreen**, supports **windowed** mode, and
   - **Steam Mortar** — arcing splash damage.
   - **Cat‑a‑pult** — cute geometric cats that **slow** enemies on hit.
 - **Economy**: place, **upgrade**, **sell** (60% refund), money/score/lives.
-- **Quality of Life**: **Fullscreen default**, **F11 / Alt+Enter** toggle, resizable window, cursor switches to **crosshair** during placement, selected tower panel at bottom.
+- **Quality of Life**: **Fullscreen default**, **F11 / Alt+Enter** toggle, resizable window, cursor switches to **crosshair** with range preview during placement, selected tower panel at bottom.
 
 ## Install
 1. Install **LÖVE 11.x** — https://love2d.org
