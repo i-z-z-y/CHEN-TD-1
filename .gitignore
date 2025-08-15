@@ -39,3 +39,112 @@ luac.out
 *.x86_64
 *.hex
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# -----------------------------
+# OS junk
+# -----------------------------
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Icon
+Desktop.ini
+
+# -----------------------------
+# Editors / IDEs
+# -----------------------------
+.vscode/
+.idea/
+*.iml
+*.suo
+*.sln
+*.ntvs*
+*.njsproj
+*.swp
+*.swo
+*.tmproj
+*.code-workspace
+
+# -----------------------------
+# Logs / temp
+# -----------------------------
+*.log
+*.tmp
+*.lock
+~$*
+
+# -----------------------------
+# Lua / LÖVE
+# -----------------------------
+# compiled Lua
+*.luac
+luacheckcache
+
+# love bundles / exports
+*.love
+*.exe
+*.app
+*.dmg
+*.deb
+*.rpm
+*.AppImage
+
+# -----------------------------
+# Project build outputs
+# -----------------------------
+/build/
+/dist/
+/export/
+/bin/
+/out/
+/artifacts/
+/releases/
+*.zip
+
+# -----------------------------
+# Game runtime & saves (if copied locally)
+# -----------------------------
+mapcode.txt
+
+# -----------------------------
+# Misc
+# -----------------------------
+*.bak
+*.orig
+*.rej
+
