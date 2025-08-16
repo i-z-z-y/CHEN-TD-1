@@ -21,8 +21,8 @@ system, enemy AI, projectile handling and rendering. Handles
 encoding/decoding of map codes, UI widgets, tower definitions and gameplay
 loops. |
 | `conf.lua` | 10 | LÖVE configuration callback. Sets default window title,
-desktop fullscreen, resolution (960×640), vsync and save directory identifier
-(`steamdefense_bw`). |
+desktop fullscreen, resolution (960×640), allows window resizing, enables
+vsync and defines the save directory identifier (`steamdefense_bw`). |
 | `CHANGELOG.md` | 52 | Release notes for every public build. Documents new
 features, bug fixes and compatibility tweaks. |
 | `FUTURE_FEATURES.md` | 41 | Roadmap ideas grouped by priority/effort (e.g.
@@ -30,8 +30,10 @@ boss waves, new towers, workshop map browser). |
 | `SUGGESTIONS.md` | 82 | Production‑readiness recommendations derived from
 source review. |
 | `TODO.md` | 67 | Task tracker translating suggestions into actionable work. |
-| `.gitignore` | 150 | Filters out compiled Lua, build artifacts, OS junk and
-editor files. |
+| `.gitignore` | 150 | Excludes compiled Lua (`*.luac`), object/library binaries,
+OS junk (e.g., `.DS_Store`, `Thumbs.db`), editor configs (`.vscode/`, `.idea/`),
+temporary logs, LÖVE export bundles (`*.love`, platform executables), build
+directories (`/build`, `/dist`, etc.) and runtime files like `mapcode.txt`. |
 
 All runtime data, such as `mapcode.txt`, is written to the user’s LÖVE save
 directory (`love.filesystem.getSaveDirectory()`), leaving the repo workspace
@@ -54,6 +56,7 @@ queries.
 * `love.math` – pseudo‑random number generation (seeding waves and enemies).
 * `love.keyboard` – reading hotkeys for menu navigation, tower selection and editor commands.
 * `love.event` – quitting the game from the menu via `love.event.quit`.
+* `(table.unpack or unpack)` – compatibility shim enabling Lua 5.1 and 5.2 support when packing bytes.
 
 No third‑party Lua modules are required, keeping distribution simple.
 
