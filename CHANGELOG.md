@@ -3,6 +3,14 @@
 All notable changes to **Steam Defense (BW, LÖVE2D)** are documented here.
 Dates use YYYY-MM-DD. Semantic-ish versions are used for clarity.
 
+## [1.3.0] - 2025-08-15 — Modularization & Data Files
+### Added
+- Pathfinding helpers extracted into `path.lua`.
+- Map-code utilities moved into `mapcode.lua` with file save/load helpers.
+- Default map definitions relocated to `maps.lua`.
+- Tower and enemy stats loaded from `data/` tables.
+- Introduced `sd.lua` namespace for shared state.
+
 ## [1.2.1] - 2025-08-15 — Build Range Preview
 ### Added
 - Placement cursor now shows the **attack radius** of the tower being positioned.

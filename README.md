@@ -84,17 +84,17 @@ No third‑party Lua modules are required, keeping distribution simple.
 
 * The play field is a fixed **16 × 12** grid; each cell is 40 pixels square.
 * Path data is stored in `pathPaint[c][r]` and converted to an ordered waypoint
-list using **breadth‑first search (BFS)** (`buildPathFromPaint`).  BFS ensures a
+list using **breadth‑first search (BFS)** (`Path.buildPathFromPaint`).  BFS ensures a
 connected route from Start to Goal while preventing diagonal movement.
 * The resultant path is cached in `pathPoints` for efficient enemy movement.
 
 ### Map Code Encoding
 
-* `encodeFromPaint` packs the 16×12 grid into a bit stream, prefixes the header
+* `Mapcode.encodeFromPaint` packs the 16×12 grid into a bit stream, prefixes the header
 `SD1`, then encodes to Base64 via `love.data.encode`.
-* `decodeToPaint` validates the header, unpacks bits back into a paint table and
+* `Mapcode.decodeToPaint` validates the header, unpacks bits back into a paint table and
 extracts Start/Goal coordinates.
-* `saveMapCodeToFile` and `loadMapCodeFromFile` persist these codes as
+* `Mapcode.saveMapCodeToFile` and `Mapcode.loadMapCodeFromFile` persist these codes as
 `mapcode.txt` in the LÖVE save directory, enabling simple sharing between
 players.
 
@@ -149,6 +149,40 @@ errors or successful saves.
   hotkeys, editor shortcuts and global commands like pause and speed cycling.
 * **`love.resize`** – updates cached dimensions when the window size changes.
 
+### Game State and Entities
+
+The runtime `game` table captures session information and mode flags:
+
+```lua
+{
+  fullscreen = false,
+  state = "menu", -- "menu" | "play" | "editor",
+  money = 200,
+  lives = 20,
+  score = 0,
+  wave = 0,
+  waveActive = false,
+  timeScale = 1.0,
+  paused = false,
+  selectedType = nil,
+  selectedTower = nil,
+  message = "",
+  messageTimer = 0,
+  endless = false,
+  waveAutoTimer = 0,
+}
+```
+
+Active entities are stored in arrays:
+
+* `towers` – placed tower instances.
+* `projectiles` – bullets and mortar shells in flight.
+* `beams` – active tesla beams.
+* `particles` – transient visual effects.
+* `enemies` – marching foes following the computed path.
+
+These collections are reset by `resetGameStats()` when starting a new game.
+
 ### Internal Function Reference
 
 For contributors needing deeper insight, notable local functions within
@@ -161,19 +195,20 @@ For contributors needing deeper insight, notable local functions within
   `love.mouse.setCursor` depending on build mode state【F:main.lua†L67-L77】.
 * `resetGameStats()` — clears currency, lives, wave counters and entity arrays
   when starting a new session【F:main.lua†L86-L92】.
-* `buildPathFromPaint()` — performs a breadth‑first search over `pathPaint`
-  to ensure a contiguous route from `startCell` to `goalCell`, rebuilds
-  `pathPoints` and marks `blocked` cells used by the path【F:main.lua†L122-L164】.
-* `encodeFromPaint()` / `decodeToPaint()` — serialize the 16×12 grid with an
-  `SD1` header into Base64 using `love.data.encode` and decode it back, fully
-  reconstructing path, start and goal positions【F:main.lua†L166-L219】.
-* `saveMapCodeToFile()` / `loadMapCodeFromFile()` — persist map codes to
-  `mapcode.txt` in the LÖVE save directory using `love.filesystem` with a
-  status message displayed in `game.message`【F:main.lua†L245-L256】.
-* `addMap()` / `defaultMaps()` — generate four built‑in layouts and insert them
-  into the menu map list, each represented by a Base64 code【F:main.lua†L258-L301】.
-* `towerTypes` table — defines cog, tesla, mortar and cat towers with cost,
-  range, damage stats and per‑level upgrade tables【F:main.lua†L305-L344】.
+* `Path.buildPathFromPaint()` — performs a breadth‑first search over
+  `pathPaint` to ensure a contiguous route from `startCell` to `goalCell`,
+  rebuilding `pathPoints` and marking `blocked` cells used by the
+  path【F:path.lua†L22-L55】.
+* `Mapcode.encodeFromPaint()` / `Mapcode.decodeToPaint()` — serialize the 16×12
+  grid with an `SD1` header into Base64 and decode it back, fully
+  reconstructing path, start and goal positions【F:mapcode.lua†L11-L49】.
+* `Mapcode.saveMapCodeToFile()` / `Mapcode.loadMapCodeFromFile()` — persist map
+  codes to `mapcode.txt` in the LÖVE save directory using
+  `love.filesystem`【F:mapcode.lua†L51-L59】.
+* `maps.lua` — provides data tables for four built‑in layouts populated at
+  startup【F:maps.lua†L1-L40】.
+* `data/towers.lua` — defines cog, tesla, mortar and cat towers with cost,
+  range, damage stats and per‑level upgrade tables【F:data/towers.lua†L1-L33】.
 * `spawnBullet`, `spawnMortarShell`, `spawnBeam`, `spawnRing` — construction
   helpers for projectiles, beam effects and particle rings appended to their
   respective arrays【F:main.lua†L351-L372】.

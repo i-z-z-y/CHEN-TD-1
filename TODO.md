@@ -8,19 +8,19 @@ current prototype to a production‑ready release.  Items reference
 
 - [ ] Break `main.lua` into modules: `menu.lua`, `gameplay.lua`, `towers.lua`,
       `enemy.lua`, `editor.lua`.
-- [ ] Extract path helpers (`neighbors`, `buildPathFromPaint`,
+- [x] Extract path helpers (`neighbors`, `buildPathFromPaint`,
       `rebuildPathPoints`) into `path.lua`.
-- [ ] Move map-code logic (`encodeFromPaint`, `decodeToPaint`,
+- [x] Move map-code logic (`encodeFromPaint`, `decodeToPaint`,
       `saveMapCodeToFile`, `loadMapCodeFromFile`) into `mapcode.lua`.
-- [ ] Relocate default map generation to `maps.lua` with data tables only.
+- [x] Relocate default map generation to `maps.lua` with data tables only.
 - [x] Move `newButton` UI factory into `ui/button.lua`.
-- [ ] Create a top‑level namespace table (`SD`) to hold shared state and
+- [x] Create a top‑level namespace table (`SD`) to hold shared state and
       exported APIs, avoiding globals.
 - [ ] Implement a state manager or `love.run` wrapper for clean transitions
       between menu, play and editor modes.
   - [x] Centralize constants (`W`, `H`, `GRID_COLS`, `GRID_ROWS`, `CELL`) into a
         `config.lua` module.
-  - [ ] Load tower and enemy stats from external data files (`data/towers.lua`,
+  - [x] Load tower and enemy stats from external data files (`data/towers.lua`,
         `data/enemies.lua`) instead of hard‑coded tables.
   - [x] Expand `love.resize` callback to refresh cursor and recompute layout
         variables so manual window resizes mirror `setFullscreen` behaviour.
@@ -97,8 +97,8 @@ current prototype to a production‑ready release.  Items reference
 ## Documentation
 
 - [ ] Write developer onboarding instructions and module diagrams.
-- [ ] Ensure each change is recorded in `CHANGELOG.md` with date and version.
-- [ ] Document `game` state table and entity arrays in the README.
+- [x] Ensure each change is recorded in `CHANGELOG.md` with date and version.
+- [x] Document `game` state table and entity arrays in the README.
 - [ ] Enforce changelog updates via pre‑commit hook or CI check.
 
 ---
