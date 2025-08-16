@@ -2,7 +2,13 @@
 -- LÖVE 11.x - high-contrast black & white, no image assets.
 -- Author: ChatGPT (GPT-5 Thinking) | License: MIT
 
+local SD = require("sd")
 local config = require("config")
+local Path = require("path")
+local Mapcode = require("mapcode")
+local towerTypes = require("data.towers")
+local enemyTypes = require("data.enemies")
+local mapsData = require("maps")
 
 local W, H = config.W, config.H
 local GRID_COLS, GRID_ROWS = config.GRID_COLS, config.GRID_ROWS
@@ -47,6 +53,21 @@ local path = {}
 local pathPoints = {}
 
 local mouse = { x=0, y=0 }
+SD.game = game
+SD.fonts = fonts
+SD.grid = grid
+SD.blocked = blocked
+SD.towers = towers
+SD.projectiles = projectiles
+SD.beams = beams
+SD.particles = particles
+SD.enemies = enemies
+SD.pathPaint = pathPaint
+SD.startCell = startCell
+SD.goalCell = goalCell
+SD.path = path
+SD.pathPoints = pathPoints
+SD.mouse = mouse
 local Button = require("ui.button")
 local ui = { buttons = {} }
 local function newButton(...)
@@ -99,11 +120,7 @@ end
 
 -- Path helpers
 local function rebuildPathPoints()
-  pathPoints = {}
-  for i,p in ipairs(path) do
-    local x,y = cellCenter(p[1], p[2])
-    pathPoints[i] = {x=x, y=y}
-  end
+  pathPoints = Path.rebuildPathPoints(path)
 end
 
 local function initGrid()
@@ -120,112 +137,19 @@ local function initGrid()
   for _,p in ipairs(path) do blocked[p[1]][p[2]] = true end
 end
 
-local function neighbors(c,r)
-  return {{c+1,r},{c-1,r},{c,r+1},{c,r-1}}
-end
-local function inside(c,r) return c>=1 and c<=GRID_COLS and r>=1 and r<=GRID_ROWS end
-
 local function buildPathFromPaint()
-  if not (inside(startCell.c,startCell.r) and inside(goalCell.c,goalCell.r)) then
-    return false, "Start/Goal outside grid"
-  end
-  if not (pathPaint[startCell.c][startCell.r] and pathPaint[goalCell.c][goalCell.r]) then
-    return false, "Start and Goal must be on painted tiles"
-  end
-  local q, prev, seen = {}, {}, {}
-  local function key(c,r) return c..":"..r end
-  table.insert(q, {c=startCell.c, r=startCell.r})
-  seen[key(startCell.c,startCell.r)] = true
-  prev[key(startCell.c,startCell.r)] = nil
-  local found = false
-  while #q>0 do
-    local cur = table.remove(q, 1)
-    if cur.c==goalCell.c and cur.r==goalCell.r then found=true break end
-    for _,n in ipairs(neighbors(cur.c,cur.r)) do
-      if inside(n[1],n[2]) and pathPaint[n[1]][n[2]] and not seen[key(n[1],n[2])] then
-        seen[key(n[1],n[2])] = true
-        prev[key(n[1],n[2])] = cur
-        table.insert(q, {c=n[1], r=n[2]})
-      end
-    end
-  end
-  if not found then return false, "No connected path from Start to Goal" end
-  local out, cur = {}, {c=goalCell.c, r=goalCell.r}
-  while cur do
-    table.insert(out, 1, {cur.c, cur.r})
-    cur = prev[key(cur.c, cur.r)]
-  end
-  -- reset blocked and set to path (ensure 2D table exists)
-  for c=1,GRID_COLS do
-    blocked[c] = blocked[c] or {}
-    for r=1,GRID_ROWS do blocked[c][r] = false end
-  end
-  for _,p in ipairs(out) do
-    blocked[p[1]] = blocked[p[1]] or {}
-    blocked[p[1]][p[2]] = true
-  end
-  path = out
+  local ok, newPath, newBlocked, err = Path.buildPathFromPaint(pathPaint, startCell, goalCell)
+  if not ok then return false, err end
+  path = newPath
+  blocked = newBlocked
   rebuildPathPoints()
   return true
 end
 
--- Encode/Decode shareable map-code strings (base64; header "SD1"; bit-packed paint)
-local function packBytes(t)
-  local u = table.unpack or unpack
-  return string.char(u(t))
-end
-local function unpackByte(s,i) return s:byte(i,i) end
-
-local function encodeFromPaint(paint, start, goal)
-  local bytes = { string.byte('S'), string.byte('D'), string.byte('1'),
-                  GRID_COLS, GRID_ROWS, start.c, start.r, goal.c, goal.r }
-  local acc, bits = 0, 0
-  for r=1,GRID_ROWS do
-    for c=1,GRID_COLS do
-      local b = (paint[c] and paint[c][r]) and 1 or 0
-      acc = acc*2 + b; bits = bits + 1
-      if bits==8 then table.insert(bytes, acc); acc, bits = 0, 0 end
-    end
-  end
-  if bits>0 then
-    -- pad remaining bits with zeros
-    for i=bits+1,8 do acc = acc*2 end
-    table.insert(bytes, acc)
-  end
-  local raw = packBytes(bytes)
-  return love.data.encode("string","base64", raw)
-end
-
-local function decodeToPaint(code)
-  local ok, raw = pcall(function() return love.data.decode("string","base64", code) end)
-  if not ok or not raw or #raw < 9 then return false, "Invalid code" end
-  if raw:sub(1,3) ~= "SD1" then return false, "Unknown code header" end
-  local cols = unpackByte(raw,4); local rows = unpackByte(raw,5)
-  if cols ~= GRID_COLS or rows ~= GRID_ROWS then return false, "Grid size mismatch" end
-  local start = {c=unpackByte(raw,6), r=unpackByte(raw,7)}
-  local goal  = {c=unpackByte(raw,8), r=unpackByte(raw,9)}
-  local paint = {}
-  for c=1,GRID_COLS do paint[c] = {} end
-  local idxByte = 10
-  local total = GRID_COLS*GRID_ROWS
-  local count = 0
-  while count < total and idxByte <= #raw do
-    local b = unpackByte(raw, idxByte); idxByte = idxByte + 1
-    for bit=7,0,-1 do
-      if count >= total then break end
-      local mask = 2^bit
-      local v = (math.floor(b / mask) % 2)==1
-      local r = math.floor(count / GRID_COLS) + 1
-      local c = (count % GRID_COLS) + 1
-      paint[c][r] = v
-      count = count + 1
-    end
-  end
-  return true, {paint=paint, start=start, goal=goal}
-end
+-- Map-code helpers are provided by mapcode.lua
 
 local function encodeMapToCodeCurrent()
-  return encodeFromPaint(pathPaint, startCell, goalCell)
+  return Mapcode.encodeFromPaint(pathPaint, startCell, goalCell)
 end
 
 local function applyMapFromDecoded(decoded)
@@ -242,7 +166,7 @@ local function applyMapFromDecoded(decoded)
 end
 
 local function applyMapFromCode(code)
-  local ok, decoded = decodeToPaint(code)
+  local ok, decoded = Mapcode.decodeToPaint(code)
   if not ok then game.message = decoded or "Decode failed"; game.messageTimer=2 return false end
   applyMapFromDecoded(decoded)
   return true
@@ -250,104 +174,37 @@ end
 
 -- Save/Load via love save dir (mapcode.txt)
 local function saveMapCodeToFile()
-  local code = encodeMapToCodeCurrent()
-  love.filesystem.write("mapcode.txt", code or "")
-  game.message="Map-code saved to save dir (mapcode.txt)"; game.messageTimer=1.8
+  local ok = Mapcode.saveMapCodeToFile(pathPaint, startCell, goalCell)
+  game.message = ok and "Map-code saved to save dir (mapcode.txt)" or "Failed saving map-code"
+  game.messageTimer=1.8
 end
 
 local function loadMapCodeFromFile()
   if not love.filesystem.getInfo("mapcode.txt") then game.message="No mapcode.txt found" game.messageTimer=1.6 return end
-  local s = love.filesystem.read("mapcode.txt")
+  local s = Mapcode.loadMapCodeFromFile()
   applyMapFromCode(s or "")
 end
 
 -- Built-in maps (generated at load)
 local menu = { idx=1, maps={} }
-local function addMap(name, paintList, sCell, gCell)
-  -- paintList: array of {c,r} cells that are path; sCell/gCell explicit
+
+local function paintFromList(paintList)
   local localPaint = {}
   for c=1,GRID_COLS do localPaint[c] = {}; for r=1,GRID_ROWS do localPaint[c][r]=false end end
   for _,p in ipairs(paintList) do localPaint[p[1]][p[2]] = true end
-  local code = encodeFromPaint(localPaint, sCell, gCell)
-  table.insert(menu.maps, {name=name, code=code})
+  return localPaint
 end
 
 local function defaultMaps()
   menu.maps = {}
-  -- 1) Classic Zig-Zag
-  local zz = {}
-  for c=1,6 do table.insert(zz, {c,6}) end
-  table.insert(zz,{6,5}); table.insert(zz,{6,4})
-  for c=7,11 do table.insert(zz,{c,4}) end
-  table.insert(zz,{11,5}); table.insert(zz,{11,6}); table.insert(zz,{11,7})
-  for c=12,16 do table.insert(zz,{c,7}) end
-  addMap("Zig-Zag Works", zz, {c=1,r=6}, {c=16,r=7})
-
-  -- 2) Big U
-  local uu = {}
-  for r=2,11 do table.insert(uu,{2,r}) end
-  for c=2,14 do table.insert(uu,{c,11}) end
-  for r=3,10 do table.insert(uu,{14,r}) end
-  addMap("Grand U", uu, {c=2,r=2}, {c=14,r=10})
-
-  -- 3) Serpentine
-  local sp = {}
-  for r=3,9 do
-    if r%2==1 then for c=2,15 do table.insert(sp,{c,r}) end else for c=15,2,-1 do table.insert(sp,{c,r}) end end
-  end
-  addMap("Serpentine Yard", sp, {c=2,r=3}, {c=15,r=9})
-
-  -- 4) Short Dash
-  local sd = {}
-  for c=1,16 do table.insert(sd,{c,6}) end
-  addMap("Short Dash", sd, {c=1,r=6}, {c=16,r=6})
-
-  if #menu.maps==0 then
-    -- fallback: use zig-zag
-    addMap("Default", zz, {c=1,r=6}, {c=16,r=7})
+  for _,m in ipairs(mapsData) do
+    local paint = paintFromList(m.paint)
+    local code = Mapcode.encodeFromPaint(paint, m.start, m.goal)
+    table.insert(menu.maps, {name=m.name, code=code})
   end
 end
 
 -- Towers
-local towerTypes = {
-  cog = {
-    name="Cog Turret",
-    cost=50, range=140, fireRate=1.0, damage=20, bulletSpeed=320,
-    upgrade = {
-      {cost=45, damage=28, range=150, fireRate=1.2},
-      {cost=70, damage=38, range=165, fireRate=1.4},
-      {cost=100, damage=52, range=180, fireRate=1.6},
-    }
-  },
-  tesla = {
-    name="Tesla Coil",
-    cost=90, range=130, dps=28, chains=3,
-    upgrade = {
-      {cost=70, dps=40, range=145, chains=3},
-      {cost=100, dps=56, range=160, chains=3},
-      {cost=140, dps=78, range=175, chains=3},
-    }
-  },
-  mortar = {
-    name="Steam Mortar",
-    cost=90, range=200, splash=70, damage=24, fireRate=0.6, projSpeed=220,
-    upgrade = {
-      {cost=70, damage=36, splash=80, range=220, fireRate=0.7},
-      {cost=100, damage=52, splash=92, range=230, fireRate=0.8},
-      {cost=140, damage=72, splash=105, range=240, fireRate=0.9},
-    }
-  },
-  cat = {
-    name="Cat-a-pult",
-    cost=75, range=155, fireRate=1.1, damage=22, bulletSpeed=300,
-    slowPct=0.35, slowDur=1.2,
-    upgrade = {
-      {cost=60, damage=30, range=170, fireRate=1.25, slowPct=0.40, slowDur=1.3},
-      {cost=90, damage=40, range=185, fireRate=1.45, slowPct=0.45, slowDur=1.4},
-      {cost=130, damage=56, range=200, fireRate=1.65, slowPct=0.50, slowDur=1.5},
-    }
-  }
-}
 
 local function makeTower(tt, cx, cy)
   local x,y = cellCenter(cx, cy)
@@ -493,8 +350,8 @@ local function drawUI()
 end
 
 -- Menu preview
-local function drawPreviewFromCode(code, cx, cy, scale)
-  local ok, decoded = decodeToPaint(code)
+  local function drawPreviewFromCode(code, cx, cy, scale)
+    local ok, decoded = Mapcode.decodeToPaint(code)
   if not ok then love.graphics.print("Invalid map-code", cx-60, cy) return end
   local size = 12 * (scale or 1)
   love.graphics.setColor(1,1,1,0.1); love.graphics.rectangle("fill", cx-GRID_COLS*size/2, cy-GRID_ROWS*size/2, GRID_COLS*size, GRID_ROWS*size)
@@ -553,14 +410,11 @@ local function makeEnemy(waveNum)
   local scaling = 1 + (waveNum-1)*0.06
   local baseHP = 30 * scaling + waveNum * 10
   local baseSpd = 55 * (1 + (waveNum*0.01))
-  local types = {
-    {name="Tin Scuttler", hp=baseHP, speed=baseSpd, reward=8},
-    {name="Bronze Beetle", hp=baseHP*1.35, speed=baseSpd*0.9, reward=10},
-    {name="Iron Grinder", hp=baseHP*0.75, speed=baseSpd*1.22, reward=9},
-  }
-  local t = types[ love.math.random(1, #types) ]
+  local def = enemyTypes[love.math.random(1, #enemyTypes)]
+  local hp = baseHP * def.hp
+  local spd = baseSpd * def.speed
   return {
-    name=t.name, hp=t.hp, maxhp=t.hp, speed=t.speed, baseSpeed=t.speed, reward=t.reward,
+    name=def.name, hp=hp, maxhp=hp, speed=spd, baseSpeed=spd, reward=def.reward,
     x=pathPoints[1].x, y=pathPoints[1].y, i=1, dead=false, reached=false, r=14,
     slow=0, slowTimer=0,
   }
@@ -924,7 +778,7 @@ function love.keypressed(key)
       game.message="Map code copied"; game.messageTimer=1.4
     elseif key=="v" then
       local code = love.system.getClipboardText() or ""
-      local ok,_ = decodeToPaint(code)
+      local ok,_ = Mapcode.decodeToPaint(code)
       if ok then
         menu.maps[menu.idx].code = code
         game.message="Slot updated from clipboard"; game.messageTimer=1.4
