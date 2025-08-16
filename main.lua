@@ -2,11 +2,13 @@
 -- LÖVE 11.x - high-contrast black & white, no image assets.
 -- Author: ChatGPT (GPT-5 Thinking) | License: MIT
 
-local W, H = 960, 640
-local GRID_COLS, GRID_ROWS = 16, 12
-local CELL = 40
-local FIELD_W = GRID_COLS * CELL
-local UI_W = W - FIELD_W
+local config = require("config")
+
+local W, H = config.W, config.H
+local GRID_COLS, GRID_ROWS = config.GRID_COLS, config.GRID_ROWS
+local CELL = config.CELL
+local FIELD_W = config.FIELD_W
+local UI_W = config.UI_W
 
 local game = {
   fullscreen = false,
@@ -45,7 +47,11 @@ local path = {}
 local pathPoints = {}
 
 local mouse = { x=0, y=0 }
+local Button = require("ui.button")
 local ui = { buttons = {} }
+local function newButton(...)
+  return Button.new(ui, ...)
+end
 
 -- Fullscreen toggle
 local function setFullscreen(on)
@@ -369,13 +375,6 @@ end
 
 local function spawnRing(x,y,r,life)
   table.insert(particles, {x=x,y=y,r=r,t=life or 0.25})
-end
-
--- UI helpers
-local function newButton(label, x,y,w,h, onclick)
-  local b = {label=label, x=x,y=y,w=w,h=h, onclick=onclick}
-  table.insert(ui.buttons, b)
-  return b
 end
 
 local function mouseIn(b) return mouse.x>=b.x and mouse.x<=b.x+b.w and mouse.y>=b.y and mouse.y<=b.y+b.h end
@@ -1004,4 +1003,5 @@ end
 function love.resize(w,h)
   W, H = w, h
   UI_W = W - FIELD_W
+  if refreshCursor then refreshCursor() end
 end

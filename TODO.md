@@ -13,17 +13,17 @@ current prototype to a production‑ready release.  Items reference
 - [ ] Move map-code logic (`encodeFromPaint`, `decodeToPaint`,
       `saveMapCodeToFile`, `loadMapCodeFromFile`) into `mapcode.lua`.
 - [ ] Relocate default map generation to `maps.lua` with data tables only.
-- [ ] Move `newButton` UI factory into `ui/button.lua`.
+- [x] Move `newButton` UI factory into `ui/button.lua`.
 - [ ] Create a top‑level namespace table (`SD`) to hold shared state and
       exported APIs, avoiding globals.
 - [ ] Implement a state manager or `love.run` wrapper for clean transitions
       between menu, play and editor modes.
-- [ ] Centralize constants (`W`, `H`, `GRID_COLS`, `GRID_ROWS`, `CELL`) into a
-      `config.lua` module.
-- [ ] Load tower and enemy stats from external data files (`data/towers.lua`,
-      `data/enemies.lua`) instead of hard‑coded tables.
-- [ ] Expand `love.resize` callback to refresh cursor and recompute layout
-      variables so manual window resizes mirror `setFullscreen` behaviour.
+  - [x] Centralize constants (`W`, `H`, `GRID_COLS`, `GRID_ROWS`, `CELL`) into a
+        `config.lua` module.
+  - [ ] Load tower and enemy stats from external data files (`data/towers.lua`,
+        `data/enemies.lua`) instead of hard‑coded tables.
+  - [x] Expand `love.resize` callback to refresh cursor and recompute layout
+        variables so manual window resizes mirror `setFullscreen` behaviour.
 
 ## Testing & Tooling
 
@@ -71,7 +71,7 @@ current prototype to a production‑ready release.  Items reference
 
 ## Packaging & Release
 
-- [ ] Commit a formal `LICENSE` file (MIT).
+  - [x] Commit a formal `LICENSE` file (MIT).
 - [ ] Script cross‑platform builds using `love-release` (or equivalent) to
       output `.love`, `.exe`, `.app` and AppImage packages.
 - [ ] Automate release builds in CI for tagged versions.
