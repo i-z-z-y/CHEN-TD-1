@@ -14,20 +14,23 @@ tooling.
 
 ## Architecture and File Overview
 
-| File | Description |
-| --- | --- |
-| `main.lua` | Monolithic game logic (~1000 lines).  Implements menu, map
-editor, wave system, enemy AI, projectile handling and rendering.  Handles
+| File | Lines | Description |
+| --- | --- | --- |
+| `main.lua` | 1007 | Monolithic game logic. Implements menu, editor, wave
+system, enemy AI, projectile handling and rendering. Handles
 encoding/decoding of map codes, UI widgets, tower definitions and gameplay
 loops. |
-| `conf.lua` | LÖVE configuration callback.  Sets default window title, desktop
-fullscreen, resolution (960×640), vsync and save directory identifier
+| `conf.lua` | 10 | LÖVE configuration callback. Sets default window title,
+desktop fullscreen, resolution (960×640), vsync and save directory identifier
 (`steamdefense_bw`). |
-| `CHANGELOG.md` | Release notes for every public build.  Documents new
+| `CHANGELOG.md` | 52 | Release notes for every public build. Documents new
 features, bug fixes and compatibility tweaks. |
-| `FUTURE_FEATURES.md` | Roadmap ideas grouped by priority/effort (e.g. boss
-waves, new towers, workshop map browser). |
-| `.gitignore` | Filters out compiled Lua, build artifacts, OS junk and common
+| `FUTURE_FEATURES.md` | 41 | Roadmap ideas grouped by priority/effort (e.g.
+boss waves, new towers, workshop map browser). |
+| `SUGGESTIONS.md` | 82 | Production‑readiness recommendations derived from
+source review. |
+| `TODO.md` | 67 | Task tracker translating suggestions into actionable work. |
+| `.gitignore` | 150 | Filters out compiled Lua, build artifacts, OS junk and
 editor files. |
 
 All runtime data, such as `mapcode.txt`, is written to the user’s LÖVE save
@@ -49,12 +52,30 @@ queries.
 * `love.system` – clipboard integration for map‑code copy/paste.
 * `love.filesystem` – persisting `mapcode.txt` in the user save folder.
 * `love.math` – pseudo‑random number generation (seeding waves and enemies).
+* `love.keyboard` – reading hotkeys for menu navigation, tower selection and editor commands.
+* `love.event` – quitting the game from the menu via `love.event.quit`.
 
 No third‑party Lua modules are required, keeping distribution simple.
 
 ---
 
 ## Technical Details
+
+### Internal Data Structures
+
+* `game` – central mutable state (fullscreen flag, current state, currency,
+  lives, score, wave counters, speed, pause flag and messaging).
+* `fonts` – preloaded `love.graphics.newFont` objects used across UI draws.
+* `grid` and `blocked` – 16×12 boolean matrices tracking tower occupancy and
+  path cells.
+* `towers`, `enemies`, `projectiles`, `beams`, `particles` – arrays of live
+  entities updated each frame.
+* `pathPaint` – editable paint grid backing the map editor; `startCell` and
+  `goalCell` store endpoints.
+* `path`/`pathPoints` – ordered tables of path cells and their pixel centres for
+  enemy movement.
+* `ui.buttons` – sidebar button definitions; `menu.maps` – default map slot
+  data including Base64 codes.
 
 ### Grid and Pathing
 
@@ -107,6 +128,23 @@ entering the editor.
 copy/paste map codes and save/load `mapcode.txt`.
 * On‑screen messages (`game.message`) provide feedback for actions such as
 errors or successful saves.
+
+### LÖVE Callback Flow
+
+* **`love.conf`** (in `conf.lua`) – defines window size, resizability, vsync,
+  desktop fullscreen and the save directory identifier.
+* **`love.load`** – initializes fonts, cursors, default maps, sidebar buttons and
+  window mode; seeds RNG and applies the first map.
+* **`love.update`** – processes messages, wave timers, enemy movement, tower
+  firing, projectile trajectories, particle decay and wave completion via
+  `endWaveIfDone`.
+* **`love.draw`** – renders grid, path, entities, UI panels, range previews and
+  editor overlay; prints control helper text.
+* **`love.mousepressed`** – handles UI button clicks, tower placement, map
+  editing toggles and cancellation with right click.
+* **`love.keypressed`** – processes fullscreen toggles, menu navigation, tower
+  hotkeys, editor shortcuts and global commands like pause and speed cycling.
+* **`love.resize`** – updates cached dimensions when the window size changes.
 
 ---
 
