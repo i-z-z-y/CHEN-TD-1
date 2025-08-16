@@ -31,6 +31,9 @@ full review of **every file** in the repository (`main.lua`, `conf.lua`,
    templates from external Lua or JSON tables (e.g., `data/towers.lua`,
    `data/enemies.lua`) instead of hard‑coding them in `main.lua` to enable
    balancing without code changes【F:main.lua†L305-L344】【F:main.lua†L552-L568】.
+7. **Enhance `love.resize` handling:** expand the existing callback to refresh
+   the cursor and mirror `setFullscreen`’s layout updates so manual window
+   resizes behave consistently【F:main.lua†L50-L64】【F:main.lua†L1004-L1007】.
 
 ## Quality and Maintainability
 
@@ -46,6 +49,8 @@ full review of **every file** in the repository (`main.lua`, `conf.lua`,
 4. **Generate API documentation** using [LDoc](https://stevedonovan.github.io/ldoc/) for all modules.
 5. **Continuous syntax checks**: run `luac -p` on every Lua file in CI to fail
    early on parse errors, complementing linting tools.
+6. **Coverage tracking:** integrate `luacov` to generate code‑coverage reports
+   and surface them in CI for regression detection.
 
 ## Gameplay Features
 
@@ -53,7 +58,8 @@ full review of **every file** in the repository (`main.lua`, `conf.lua`,
    cues. Provide volume sliders in a future settings menu and load audio assets
    via `love.audio.newSource`.
 2. **Persisted settings:** store fullscreen preference, volumes and key binds in
-   a `settings.json` file using `love.filesystem`.
+   a `settings.json` file using `love.filesystem`; include last window
+   dimensions so desktop sessions reopen at the previous size.
 3. **High‑score storage:** save top waves/scores locally in `scores.json` and
    optionally sync to an online leaderboard.
 4. **Accessibility options:** adjustable font scale (via
@@ -92,6 +98,8 @@ full review of **every file** in the repository (`main.lua`, `conf.lua`,
 7. **Embed window icon and metadata:** supply `t.window.icon` in `conf.lua`
    alongside the existing window fields and include desktop metadata files
    (`.desktop`, `.app`, `Info.plist`) for each platform【F:conf.lua†L1-L9】.
+8. **High‑DPI support:** set `t.window.highdpi = true` in `conf.lua` and bundle
+   scaled icons so the game renders crisply on retina/4K displays.
 
 ## Security & Robustness
 

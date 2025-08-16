@@ -22,6 +22,8 @@ current prototype to a production‑ready release.  Items reference
       `config.lua` module.
 - [ ] Load tower and enemy stats from external data files (`data/towers.lua`,
       `data/enemies.lua`) instead of hard‑coded tables.
+- [ ] Expand `love.resize` callback to refresh cursor and recompute layout
+      variables so manual window resizes mirror `setFullscreen` behaviour.
 
 ## Testing & Tooling
 
@@ -36,13 +38,15 @@ current prototype to a production‑ready release.  Items reference
 - [ ] Generate API docs with `ldoc` and publish to GitHub Pages.
 - [ ] Add a CI step running `luac -p` on all Lua files to catch syntax errors
       early.
+- [ ] Integrate `luacov` to collect coverage metrics and fail CI when
+      coverage drops.
 
 ## Gameplay Enhancements
 
 - [ ] Integrate `love.audio` and design sound effects/music cues:
       - [ ] Fire tower placement and enemy death sounds.
       - [ ] Loop background music track.
-- [ ] Persist user settings (fullscreen, volume, key binds) using
+- [ ] Persist user settings (fullscreen, window size, volume, key binds) using
       `love.filesystem`:
       - [ ] Read/write `settings.json` at startup and shutdown.
 - [ ] Implement local high‑score saving; design optional online leaderboard
@@ -76,6 +80,8 @@ current prototype to a production‑ready release.  Items reference
 - [ ] Embed version string and git hash in the main menu.
 - [ ] Provide a window icon via `t.window.icon` and bundle platform metadata
       files.
+- [ ] Enable high-DPI rendering (`t.window.highdpi = true`) and package
+      scaled icons for retina/4K displays.
 
 ## Security & Robustness
 
