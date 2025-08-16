@@ -23,6 +23,14 @@ full review of **every file** in the repository (`main.lua`, `conf.lua`,
    rather than branching on `game.state` inside callbacks.
 4. **Isolate UI widgets:** place the `newButton` factory and related draw logic
    into `ui/button.lua` to simplify unit testing and reuse.
+5. **Centralize configuration constants:** move `W`, `H`, `GRID_COLS`,
+   `GRID_ROWS` and `CELL` from the top of `main.lua` into a dedicated
+   `config.lua` module so window and grid sizes can be adjusted without
+   touching gameplay logic【F:main.lua†L5-L9】.
+6. **Data‑drive tower and enemy stats:** load tower definitions and enemy
+   templates from external Lua or JSON tables (e.g., `data/towers.lua`,
+   `data/enemies.lua`) instead of hard‑coding them in `main.lua` to enable
+   balancing without code changes【F:main.lua†L305-L344】【F:main.lua†L552-L568】.
 
 ## Quality and Maintainability
 
@@ -36,6 +44,8 @@ full review of **every file** in the repository (`main.lua`, `conf.lua`,
 3. **Document a coding style guide** (indentation, naming, module boundaries)
    for contributors and enforce it with `stylua` or `lua-format`.
 4. **Generate API documentation** using [LDoc](https://stevedonovan.github.io/ldoc/) for all modules.
+5. **Continuous syntax checks**: run `luac -p` on every Lua file in CI to fail
+   early on parse errors, complementing linting tools.
 
 ## Gameplay Features
 
@@ -48,6 +58,9 @@ full review of **every file** in the repository (`main.lua`, `conf.lua`,
    optionally sync to an online leaderboard.
 4. **Accessibility options:** adjustable font scale (via
    `love.graphics.newFont`), color inversion toggle and remappable controls.
+5. **Dynamic button layout:** auto‑generate sidebar buttons from `towerTypes`
+   to prevent label duplication and ensure new towers appear without manual UI
+   updates【F:main.lua†L630-L653】.
 
 ## Performance and Optimization
 
@@ -59,6 +72,9 @@ full review of **every file** in the repository (`main.lua`, `conf.lua`,
    entities for regression tracking.
 4. **Localize LÖVE modules:** cache `love.graphics`, `love.mouse` and others in
    locals at the top of modules to avoid repeated table lookups each frame.
+5. **State change minimization:** cache current `love.graphics` colors and line
+   widths to avoid redundant `setColor`/`setLineWidth` calls inside draw loops,
+   reducing GPU state churn【F:main.lua†L386-L399】【F:main.lua†L840-L846】.
 
 ## Distribution & Packaging
 
@@ -73,6 +89,9 @@ full review of **every file** in the repository (`main.lua`, `conf.lua`,
    screenshots for itch.io/Steam listings.
 6. **Crash reporting:** wrap `love.errorhandler` with custom logging to capture
    stack traces and user environment details.
+7. **Embed window icon and metadata:** supply `t.window.icon` in `conf.lua`
+   alongside the existing window fields and include desktop metadata files
+   (`.desktop`, `.app`, `Info.plist`) for each platform【F:conf.lua†L1-L9】.
 
 ## Security & Robustness
 
@@ -85,6 +104,9 @@ full review of **every file** in the repository (`main.lua`, `conf.lua`,
    gracefully.
 4. **Sanitize user config**: when loading `settings.json`, validate JSON fields
    and fallback to defaults on parse errors.
+5. **Clipboard length cap:** limit `love.system.getClipboardText` to a maximum
+   length (e.g., 256 characters) before attempting `decodeToPaint` to avoid
+   allocating enormous strings.【F:main.lua†L923-L933】【F:main.lua†L996-L997】
 
 ## Documentation
 
@@ -94,6 +116,9 @@ full review of **every file** in the repository (`main.lua`, `conf.lua`,
    and date.
 3. **Explain data structures**: detail `game`, `towers`, `enemies`, etc. in the
    README so new contributors understand state layout.
+4. **CHANGELOG gatekeeping:** add a commit hook ensuring any change touching
+   `main.lua` or gameplay code comes with a corresponding dated entry in
+   `CHANGELOG.md`.
 
 These suggestions aim to bridge the gap between a functional prototype and a
 market‑ready product.

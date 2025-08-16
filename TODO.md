@@ -18,6 +18,10 @@ current prototype to a production‑ready release.  Items reference
       exported APIs, avoiding globals.
 - [ ] Implement a state manager or `love.run` wrapper for clean transitions
       between menu, play and editor modes.
+- [ ] Centralize constants (`W`, `H`, `GRID_COLS`, `GRID_ROWS`, `CELL`) into a
+      `config.lua` module.
+- [ ] Load tower and enemy stats from external data files (`data/towers.lua`,
+      `data/enemies.lua`) instead of hard‑coded tables.
 
 ## Testing & Tooling
 
@@ -30,6 +34,8 @@ current prototype to a production‑ready release.  Items reference
 - [ ] Configure GitHub Actions to run linting and tests on every push.
 - [ ] Enforce formatting with `stylua` or `lua-format` in CI.
 - [ ] Generate API docs with `ldoc` and publish to GitHub Pages.
+- [ ] Add a CI step running `luac -p` on all Lua files to catch syntax errors
+      early.
 
 ## Gameplay Enhancements
 
@@ -46,6 +52,8 @@ current prototype to a production‑ready release.  Items reference
       remapping:
       - [ ] Allow font size multiplier via `love.graphics.newFont`.
       - [ ] Expose key‑binding config in settings menu.
+- [ ] Auto‑generate sidebar buttons from `towerTypes` to avoid manual updates
+      when adding new tower types.
 
 ## Performance
 
@@ -54,6 +62,8 @@ current prototype to a production‑ready release.  Items reference
 - [ ] Expose a debug toggle to display frame time and entity counts.
 - [ ] Localize frequently used modules (`love.graphics`, `love.mouse`, etc.) to
       locals for performance.
+- [ ] Cache `love.graphics` color and line width state to minimize redundant
+      `setColor`/`setLineWidth` calls.
 
 ## Packaging & Release
 
@@ -64,6 +74,8 @@ current prototype to a production‑ready release.  Items reference
 - [ ] Produce marketing assets: icons, screenshots, store banners.
 - [ ] Implement crash logging via a custom `love.errorhandler`.
 - [ ] Embed version string and git hash in the main menu.
+- [ ] Provide a window icon via `t.window.icon` and bundle platform metadata
+      files.
 
 ## Security & Robustness
 
@@ -73,12 +85,15 @@ current prototype to a production‑ready release.  Items reference
       messages on failure.
 - [ ] Append a checksum to map codes and verify during decode.
 - [ ] Validate `settings.json` fields and fallback to defaults on error.
+- [ ] Cap clipboard text length before decoding map codes to prevent large
+      allocations.
 
 ## Documentation
 
 - [ ] Write developer onboarding instructions and module diagrams.
 - [ ] Ensure each change is recorded in `CHANGELOG.md` with date and version.
 - [ ] Document `game` state table and entity arrays in the README.
+- [ ] Enforce changelog updates via pre‑commit hook or CI check.
 
 ---
 
