@@ -146,6 +146,48 @@ errors or successful saves.
   hotkeys, editor shortcuts and global commands like pause and speed cycling.
 * **`love.resize`** – updates cached dimensions when the window size changes.
 
+### Internal Function Reference
+
+For contributors needing deeper insight, notable local functions within
+`main.lua` include:
+
+* `setFullscreen(on)` — wraps `love.window.setFullscreen` and `love.window.setMode`
+  to toggle desktop fullscreen while recalculating `W`, `H` and sidebar width; it
+  also refreshes the cursor to avoid stale state【F:main.lua†L50-L64】.
+* `refreshCursor()` — swaps between arrow and crosshair system cursors via
+  `love.mouse.setCursor` depending on build mode state【F:main.lua†L67-L77】.
+* `resetGameStats()` — clears currency, lives, wave counters and entity arrays
+  when starting a new session【F:main.lua†L86-L92】.
+* `buildPathFromPaint()` — performs a breadth‑first search over `pathPaint`
+  to ensure a contiguous route from `startCell` to `goalCell`, rebuilds
+  `pathPoints` and marks `blocked` cells used by the path【F:main.lua†L122-L164】.
+* `encodeFromPaint()` / `decodeToPaint()` — serialize the 16×12 grid with an
+  `SD1` header into Base64 using `love.data.encode` and decode it back, fully
+  reconstructing path, start and goal positions【F:main.lua†L166-L219】.
+* `saveMapCodeToFile()` / `loadMapCodeFromFile()` — persist map codes to
+  `mapcode.txt` in the LÖVE save directory using `love.filesystem` with a
+  status message displayed in `game.message`【F:main.lua†L245-L256】.
+* `addMap()` / `defaultMaps()` — generate four built‑in layouts and insert them
+  into the menu map list, each represented by a Base64 code【F:main.lua†L258-L301】.
+* `towerTypes` table — defines cog, tesla, mortar and cat towers with cost,
+  range, damage stats and per‑level upgrade tables【F:main.lua†L305-L344】.
+* `spawnBullet`, `spawnMortarShell`, `spawnBeam`, `spawnRing` — construction
+  helpers for projectiles, beam effects and particle rings appended to their
+  respective arrays【F:main.lua†L351-L372】.
+* `placeSelectedAt(cx, cy)` — validates placement coordinates, subtracts cost
+  via `spend()` and inserts a new tower into the grid【F:main.lua†L519-L527】.
+* `nearestEnemy()` / `nearestNEnemies()` — targeting utilities used by tower
+  logic to pick optimal foes within range【F:main.lua†L530-L550】.
+* `makeEnemy(waveNum)` — constructs a randomised enemy table per wave using
+  `love.math.random`, scaling HP and speed by wave index【F:main.lua†L552-L568】.
+* `startNextWave()` and `endWaveIfDone(dt)` — manage wave progression, spawn
+  cadence and cash bonuses once all enemies are eliminated【F:main.lua†L570-L596】.
+* `love.update(dt)` — central game loop handling enemy movement, tower firing,
+  projectile collision, beam decay and wave completion each frame【F:main.lua†L683-L821】.
+* `love.keypressed(key)` — covers fullscreen toggles, menu navigation,
+  tower hotkeys, editor shortcuts and saving/loading map codes through clipboard
+  interactions【F:main.lua†L882-L999】.
+
 ---
 
 ## Installation and Execution
