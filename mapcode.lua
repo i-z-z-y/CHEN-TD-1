@@ -22,7 +22,7 @@ function Mapcode.encodeFromPaint(paint, start, goal)
     end
   end
   if bits>0 then
-    for i=bits+1,8 do acc = acc*2 end
+    for _=bits+1,8 do acc = acc*2 end
     table.insert(bytes, acc)
   end
   local raw = packBytes(bytes)

@@ -27,7 +27,7 @@ current prototype to a production‑ready release.  Items reference
 
 ## Testing & Tooling
 
-- [ ] Introduce `luacheck` for linting; add configuration to reject unused
+- [x] Introduce `luacheck` for linting; add configuration to reject unused
       variables and accidental globals.
 - [ ] Add unit tests using `busted` or `luaunit` covering:
       - [ ] Map encode/decode round‑trips.
@@ -96,7 +96,7 @@ current prototype to a production‑ready release.  Items reference
 
 ## Documentation
 
-- [ ] Write developer onboarding instructions and module diagrams.
+- [x] Write developer onboarding instructions and module diagrams.
 - [x] Ensure each change is recorded in `CHANGELOG.md` with date and version.
 - [x] Document `game` state table and entity arrays in the README.
 - [ ] Enforce changelog updates via pre‑commit hook or CI check.

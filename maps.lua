@@ -1,5 +1,3 @@
-local maps = {}
-
 local function zigzag()
   local t={}
   for c=1,6 do t[#t+1]={c,6} end
@@ -36,7 +34,7 @@ local function shortDash()
   return t
 end
 
-maps = {
+local maps = {
   {name="Zig-Zag Works", paint=zigzag(), start={c=1,r=6}, goal={c=16,r=7}},
   {name="Grand U", paint=grandU(), start={c=2,r=2}, goal={c=14,r=10}},
   {name="Serpentine Yard", paint=serpentine(), start={c=2,r=3}, goal={c=15,r=9}},
