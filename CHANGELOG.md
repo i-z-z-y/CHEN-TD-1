@@ -3,6 +3,11 @@
 All notable changes to **Steam Defense (BW, LÖVE2D)** are documented here.
 Dates use YYYY-MM-DD. Semantic-ish versions are used for clarity.
 
+## [1.3.1] - 2025-08-15 — Tooling & Docs
+### Added
+- Configured `luacheck` linting and resolved warnings.
+- Developer onboarding guide (`DEVELOPER.md`) outlining modules.
+
 ## [1.3.0] - 2025-08-15 — Modularization & Data Files
 ### Added
 - Pathfinding helpers extracted into `path.lua`.

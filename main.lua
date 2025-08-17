@@ -53,6 +53,7 @@ local path = {}
 local pathPoints = {}
 
 local mouse = { x=0, y=0 }
+local refreshCursor -- forward declaration for luacheck
 SD.game = game
 SD.fonts = fonts
 SD.grid = grid
@@ -94,7 +95,7 @@ end
 -- Cursor handling
 local cursors = {}
 local currentCursor = "arrow"
-local function refreshCursor()
+function refreshCursor()
   local desired = "arrow"
   if game.state=="play" and game.selectedType then desired = "cross" end
   if desired ~= currentCursor and cursors[desired] then
