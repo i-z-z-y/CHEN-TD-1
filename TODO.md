@@ -4,6 +4,19 @@ This file enumerates actionable tasks required to move the project from the
 current prototype to a production‑ready release.  Items reference
 `SUGGESTIONS.md` and should be checked off as completed.
 
+## MVP Polish & Missing Features
+
+- [ ] Replace debug tower buttons with polished icons and tooltips
+- [ ] Add a pre-game menu for map selection, settings and quitting
+- [ ] Implement an in-game pause menu with resume, restart and exit options
+- [ ] Create 10 playable levels and decide tutorial vs. campaign structure
+- [ ] Build tower upgrade trees with 2–3 branches per tower
+- [ ] Integrate at least one support tower (e.g. slow field or buff tower)
+- [ ] Provide a minimal narrative intro or cutscene
+- [ ] Add basic sound effects and a simple background track with volume control
+- [ ] Save player progress/unlocked levels locally
+- [ ] Show victory/defeat screens summarizing stats
+
 ## Codebase Refactor
 
 - [ ] Break `main.lua` into modules: `menu.lua`, `gameplay.lua`, `towers.lua`,
