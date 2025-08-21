@@ -84,7 +84,7 @@ full review of **every file** in the repository (`main.lua`, `conf.lua`,
 
 ## Distribution & Packaging
 
-1. **Add a `LICENSE` file** matching the MIT reference to clarify terms.
+1. **Add a `LICENSE` file** clarifying proprietary rights and usage terms.
 2. **Versioned builds:** script releases using `love-release` or similar to
    produce `.love`, Windows `.exe`, macOS `.app` and Linux AppImage packages.
 3. **CI pipeline:** use GitHub Actions to run tests/linters and generate release

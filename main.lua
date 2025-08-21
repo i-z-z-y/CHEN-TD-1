@@ -1,6 +1,6 @@
 -- SteamDefense BW — Start Menu + Multi-Maps + Share Codes + Chain Tesla + Slow Cats
 -- LÖVE 11.x - high-contrast black & white, no image assets.
--- Author: ChatGPT (GPT-5 Thinking) | License: MIT
+-- Author: ChatGPT (GPT-5 Thinking) | License: Proprietary (All rights reserved)
 
 local SD = require("sd")
 local config = require("config")

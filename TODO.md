@@ -84,7 +84,7 @@ current prototype to a production‑ready release.  Items reference
 
 ## Packaging & Release
 
-  - [x] Commit a formal `LICENSE` file (MIT).
+  - [x] Commit a formal `LICENSE` file.
 - [ ] Script cross‑platform builds using `love-release` (or equivalent) to
       output `.love`, `.exe`, `.app` and AppImage packages.
 - [ ] Automate release builds in CI for tagged versions.
