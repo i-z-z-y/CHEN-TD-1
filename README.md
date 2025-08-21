@@ -312,8 +312,8 @@ message.
 
 ## License
 
-Steam Defense is released under the **MIT License**.  See `main.lua` header for
-authorship notice.  A formal `LICENSE` file is recommended for distribution.
+Steam Defense is proprietary software. All rights are reserved. See `main.lua`
+header and the `LICENSE` file for ownership details.
 
 ---
 
