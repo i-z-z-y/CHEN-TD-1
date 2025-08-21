@@ -125,15 +125,17 @@ Damage tags: Physical (Cog, Cat-a-pult, Mortar), Energy (Tesla, EMP). Armor resi
 - No in-game currency at launch; potential DLC map pack later
 - Optional neon skins as cosmetic DLC post-launch
 
-## 11) 8-Week Production Snapshot
-Week 1: Menus, pause, placement UX, basic upgrade panel  
-Week 2: HUD polish, end screens, speed control, save/settings  
-Week 3: Enemies (5 + boss), spawn logic, tags/traits  
-Week 4: Towers → branch logic for existing four + Amplifier + EMP Coil  
-Week 5: Tutorial maps (3) + teaching copy  
-Week 6: Campaign maps (4) + first balance pass  
-Week 7: Campaign maps (3) + audio pass + VFX polish  
-Week 8: Full balance, bugfix, packaging, page assets
+## 11) 10-Day Production Snapshot (starts 2025-08-22)
+Day 1 (2025-08-22): CEO approvals
+Day 2 (2025-08-23): Menus, pause, placement UX, basic upgrade panel
+Day 3 (2025-08-24): HUD polish, end screens, speed control, save/settings
+Day 4 (2025-08-25): Enemies (5 + boss), spawn logic, tags/traits
+Day 5 (2025-08-26): Towers → branch logic for existing four + Amplifier + EMP Coil
+Day 6 (2025-08-27): Tutorial maps (3) + teaching copy
+Day 7 (2025-08-28): Campaign maps (4) + first balance pass
+Day 8 (2025-08-29): Campaign maps (3) + audio pass + VFX polish
+Day 9 (2025-08-30): Full balance, bugfix, packaging, page assets
+Day 10 (2025-08-31): Play testing and CEO approval
 
 ## 12) Definition of Done
 - All 10 maps beatable; no softlocks; stable framerate
@@ -148,6 +150,6 @@ Endless mode refinements, daily seeds, meta progression, talents, achievements, 
 ## 14) CEO Action Items
 - [ ] Confirm or revise working title **NEON BRINK**
 - [ ] Approve placeholder launch price **$5.99**
-- [ ] Review and approve 8-week MVP plan
+- [ ] Review and approve 10-day MVP plan (includes start/end approval days)
 - [ ] Provide one-line studio tagline for Steam page
 
