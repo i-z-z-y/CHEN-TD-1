@@ -1,120 +1,92 @@
-# Steam Defense – Task Tracker
+# Project Backlog (P0–P2)
 
-This file enumerates actionable tasks required to move the project from the
-current prototype to a production‑ready release.  Items reference
-`SUGGESTIONS.md` and should be checked off as completed.
+This file tracks tasks required to take the current prototype to a minimal Steam release.
+`P0` = must ship, `P1` = nice to have, `P2` = later.
 
-## MVP Polish & Missing Features
+## P0 — Must Ship
 
+### Shell & Navigation
 - [ ] Replace debug tower buttons with polished icons and tooltips
 - [ ] Add a pre-game menu for map selection, settings and quitting
 - [ ] Implement an in-game pause menu with resume, restart and exit options
-- [ ] Create 10 playable levels and decide tutorial vs. campaign structure
-- [ ] Build tower upgrade trees with 2–3 branches per tower
-- [ ] Integrate at least one support tower (e.g. slow field or buff tower)
-- [ ] Provide a minimal narrative intro or cutscene
-- [ ] Add basic sound effects and a simple background track with volume control
-- [ ] Save player progress/unlocked levels locally
-- [ ] Show victory/defeat screens summarizing stats
 
-## Codebase Refactor
+### HUD & Controls
+- [ ] Display lives, cash, wave counter and speed toggle in HUD
+- [ ] Allow 1×/2× game speed
 
-- [ ] Break `main.lua` into modules: `menu.lua`, `gameplay.lua`, `towers.lua`,
-      `enemy.lua`, `editor.lua`.
-- [x] Extract path helpers (`neighbors`, `buildPathFromPaint`,
-      `rebuildPathPoints`) into `path.lua`.
-- [x] Move map-code logic (`encodeFromPaint`, `decodeToPaint`,
-      `saveMapCodeToFile`, `loadMapCodeFromFile`) into `mapcode.lua`.
-- [x] Relocate default map generation to `maps.lua` with data tables only.
-- [x] Move `newButton` UI factory into `ui/button.lua`.
-- [x] Create a top‑level namespace table (`SD`) to hold shared state and
-      exported APIs, avoiding globals.
+### Placement & Build UX
+- [ ] Create 10 playable levels (3 tutorial + 7 campaign)
+- [ ] Build tower upgrade trees with 2–3 branches for each of the four existing towers
+- [ ] Add Neon Amplifier support tower
+- [ ] Add EMP Coil utility tower
+- [ ] Provide one-line narrative transmissions per map
+
+### Enemies & Waves
+- [ ] Expand roster from 3 to 5 base enemy types plus boss
+- [ ] Roughly 10 waves per level, mini-boss on wave 5, boss on wave 10
+
+### Audio/Visual
+- [ ] Basic SFX for placement, firing, deaths, UI, and boss roar
+- [ ] Ambient music loop with tension loop near final wave
+- [ ] Neon outline shader, shield break flash, burn/tar decals
+
+### Systems
+- [ ] Save player progress and unlocked levels locally
+- [ ] Victory/defeat screens summarizing stats
+
+### Steam Readiness
+- [ ] Package playable build for Steam upload
+
+## P1 — Nice to Have
+
+### Codebase Refactor
+- [ ] Break `main.lua` into modules (`menu.lua`, `gameplay.lua`, `towers.lua`, `enemy.lua`, `editor.lua`)
 - [ ] Implement a state manager or `love.run` wrapper for clean transitions
-      between menu, play and editor modes.
-  - [x] Centralize constants (`W`, `H`, `GRID_COLS`, `GRID_ROWS`, `CELL`) into a
-        `config.lua` module.
-  - [x] Load tower and enemy stats from external data files (`data/towers.lua`,
-        `data/enemies.lua`) instead of hard‑coded tables.
-  - [x] Expand `love.resize` callback to refresh cursor and recompute layout
-        variables so manual window resizes mirror `setFullscreen` behaviour.
+- [ ] Expand `love.resize` callback to mirror `setFullscreen` updates
 
-## Testing & Tooling
+### Testing & Tooling
+- [ ] Unit tests for map encode/decode, BFS path construction, and upgrade logic
+- [ ] GitHub Actions running linting and tests on each push
+- [ ] Formatting enforcement with `stylua` or `lua-format`
 
-- [x] Introduce `luacheck` for linting; add configuration to reject unused
-      variables and accidental globals.
-- [ ] Add unit tests using `busted` or `luaunit` covering:
-      - [ ] Map encode/decode round‑trips.
-      - [ ] BFS path construction.
-      - [ ] Tower upgrade cost and stat progression.
-- [ ] Configure GitHub Actions to run linting and tests on every push.
-- [ ] Enforce formatting with `stylua` or `lua-format` in CI.
-- [ ] Generate API docs with `ldoc` and publish to GitHub Pages.
-- [ ] Add a CI step running `luac -p` on all Lua files to catch syntax errors
-      early.
-- [ ] Integrate `luacov` to collect coverage metrics and fail CI when
-      coverage drops.
+### Gameplay Enhancements
+- [ ] Persist user settings (fullscreen, window size, volume, key binds)
+- [ ] High-score saving with optional online leaderboard
+- [ ] Accessibility options (font scaling, color inversion, control remapping)
+- [ ] Auto-generate sidebar buttons from `towerTypes`
 
-## Gameplay Enhancements
+### Performance
+- [ ] Object pools for projectiles, beams and particles
+- [ ] Clamp or interpolate `dt` to smooth spikes
+- [ ] Debug toggle showing frame time and entity counts
+- [ ] Localize frequently used modules (`love.graphics`, `love.mouse`, etc.)
+- [ ] Cache `love.graphics` color and line width state
 
-- [ ] Integrate `love.audio` and design sound effects/music cues:
-      - [ ] Fire tower placement and enemy death sounds.
-      - [ ] Loop background music track.
-- [ ] Persist user settings (fullscreen, window size, volume, key binds) using
-      `love.filesystem`:
-      - [ ] Read/write `settings.json` at startup and shutdown.
-- [ ] Implement local high‑score saving; design optional online leaderboard
-      API:
-      - [ ] Store top scores in `scores.json` and display in menu.
-- [ ] Add accessibility options: font scaling, color inversion, control
-      remapping:
-      - [ ] Allow font size multiplier via `love.graphics.newFont`.
-      - [ ] Expose key‑binding config in settings menu.
-- [ ] Auto‑generate sidebar buttons from `towerTypes` to avoid manual updates
-      when adding new tower types.
+### Packaging & Release
+- [ ] Script cross-platform builds with `love-release`
+- [ ] Automate release builds in CI
+- [ ] Produce marketing assets (icons, screenshots, store banners)
+- [ ] Embed version string and git hash in the main menu
+- [ ] Provide window icon via `t.window.icon`
+- [ ] Enable high-DPI rendering (`t.window.highdpi = true`)
 
-## Performance
+### Security & Robustness
+- [ ] Harden clipboard input validation in `applyMapFromCode`
+- [ ] Wrap file read/write operations with `pcall`
+- [ ] Append checksum to map codes
+- [ ] Validate `settings.json` fields and cap clipboard text length
 
-- [ ] Build object pools for projectiles, beams and particles.
-- [ ] Add `dt` clamping or interpolation to smooth frame spikes.
-- [ ] Expose a debug toggle to display frame time and entity counts.
-- [ ] Localize frequently used modules (`love.graphics`, `love.mouse`, etc.) to
-      locals for performance.
-- [ ] Cache `love.graphics` color and line width state to minimize redundant
-      `setColor`/`setLineWidth` calls.
+### Documentation
+- [ ] Enforce changelog updates via pre-commit hook or CI check
 
-## Packaging & Release
-
-  - [x] Commit a formal `LICENSE` file.
-- [ ] Script cross‑platform builds using `love-release` (or equivalent) to
-      output `.love`, `.exe`, `.app` and AppImage packages.
-- [ ] Automate release builds in CI for tagged versions.
-- [ ] Produce marketing assets: icons, screenshots, store banners.
-- [ ] Implement crash logging via a custom `love.errorhandler`.
-- [ ] Embed version string and git hash in the main menu.
-- [ ] Provide a window icon via `t.window.icon` and bundle platform metadata
-      files.
-- [ ] Enable high-DPI rendering (`t.window.highdpi = true`) and package
-      scaled icons for retina/4K displays.
-
-## Security & Robustness
-
-- [ ] Harden clipboard input validation in `applyMapFromCode` to reject overly
-      long or malformed strings.
-- [ ] Wrap file read/write operations with `pcall` and surface friendly
-      messages on failure.
-- [ ] Append a checksum to map codes and verify during decode.
-- [ ] Validate `settings.json` fields and fallback to defaults on error.
-- [ ] Cap clipboard text length before decoding map codes to prevent large
-      allocations.
-
-## Documentation
-
-- [x] Write developer onboarding instructions and module diagrams.
-- [x] Ensure each change is recorded in `CHANGELOG.md` with date and version.
-- [x] Document `game` state table and entity arrays in the README.
-- [ ] Enforce changelog updates via pre‑commit hook or CI check.
-
----
-
-_This TODO list is the single source of truth for project progress._
+## P2 — Later
+- [ ] Generate API docs with `ldoc` and publish to GitHub Pages
+- [ ] CI step running `luac -p` to catch syntax errors early
+- [ ] Integrate `luacov` for coverage metrics
+- [ ] Crash logging via custom `love.errorhandler`
+- [ ] Level editor enhancements (brush tools, live path validator, workshop browser)
+- [ ] Unlockables, daily challenges, achievements, cosmetics
+- [ ] Dynamic pathfinding for multi-lane maps
+- [ ] Gamepad support and photo mode
+- [ ] Cloud saves and other online features
 
